@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Virtual Light Screen</title>
+		<link
+			rel="stylesheet"
+			href="https://cdn.jsdelivr.net/npm/halfmoon@1.1.1/css/halfmoon.min.css"
+			integrity="sha256-IwBN7chtSwfo7dyV4Nhdt2xvPuzXTVCnVisafzudctg="
+			crossorigin="anonymous"
+		/>
+		<!-- <link
+			rel="stylesheet"
+			href="https://cdn.jsdelivr.net/npm/flexboxgrid@6.3.1/dist/flexboxgrid.min.css"
+			integrity="sha256-/8+sU56ayrJGahG9mmcUaNEghbavaceGybkdqO96Kk0="
+			crossorigin="anonymous"
+		/> -->
+		<link rel="stylesheet" href="./style.css" />
+	</head>
+	<body>
+		<canvas></canvas>
+		<div class="settingsInvite"></div>
+		<div class="settings card">
+			<h2 class="text-center title">Settings:</h2>
+			<div class="row">
+				<label>
+					<input type="color" id="colorPicker" value="#ffffff" />
+					Primary Color Picker
+				</label>
+			</div>
+			<div class="row">
+				<h4 class="col-12 col-sm-2">Presets:</h4>
+				<div class="col-12 col-sm-10 row presets">
+					<button
+						type="button"
+						class="option btn shadow"
+						style="background-color: white"
+					></button>
+					<button
+						type="button"
+						class="option btn shadow"
+						style="background-color: #e5ff00"
+					></button>
+					<button
+						type="button"
+						class="option btn shadow"
+						style="background-color: red"
+					></button>
+				</div>
+			</div>
+			<div class="custom-switch">
+				<input type="checkbox" id="ring-vs-full" />
+				<label for="ring-vs-full">Ring Light Mode</label>
+			</div>
+		</div>
+		<script src="./index.js"></script>
+	</body>
+</html>

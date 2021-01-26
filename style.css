@@ -1,0 +1,40 @@
+:root {
+	--selectedFillColor: #ffffff;
+}
+
+.settings.card {
+	background-color: #ffffffcd;
+}
+.settings .title {
+	font-size: 3rem;
+}
+
+#colorPicker {
+	border-radius: 7px;
+	width: 40px;
+	height: 40px;
+	padding: 3px;
+}
+
+canvas {
+	width: 100%;
+	height: 100%;
+	position: fixed;
+	top: 0px;
+	left: 0px;
+}
+
+body {
+	background-color: var(--selectedFillColor);
+}
+.presets .option {
+	width: 50px;
+	height: 50px;
+}
+.presets {
+	justify-content: space-around;
+}
+.card {
+	padding: 2rem;
+	margin: 2rem;
+}
