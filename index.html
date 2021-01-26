@@ -10,18 +10,17 @@
 			integrity="sha256-IwBN7chtSwfo7dyV4Nhdt2xvPuzXTVCnVisafzudctg="
 			crossorigin="anonymous"
 		/>
-		<!-- <link
-			rel="stylesheet"
-			href="https://cdn.jsdelivr.net/npm/flexboxgrid@6.3.1/dist/flexboxgrid.min.css"
-			integrity="sha256-/8+sU56ayrJGahG9mmcUaNEghbavaceGybkdqO96Kk0="
-			crossorigin="anonymous"
-		/> -->
 		<link rel="stylesheet" href="./style.css" />
 	</head>
 	<body>
 		<canvas></canvas>
 		<div class="settingsInvite"></div>
-		<div class="settings card">
+		<div
+			data-pinned="false"
+			data-hidden="false"
+			data-mode="ring"
+			class="settings card"
+		>
 			<h2 class="text-center title">Settings:</h2>
 			<div class="row">
 				<label>
@@ -40,18 +39,55 @@
 					<button
 						type="button"
 						class="option btn shadow"
-						style="background-color: #e5ff00"
+						style="background-color: #f8b868"
 					></button>
 					<button
 						type="button"
 						class="option btn shadow"
-						style="background-color: red"
+						style="background-color: #fff1b7"
+					></button>
+					<button
+						type="button"
+						class="option btn shadow"
+						style="background-color: #eaf6f5"
 					></button>
 				</div>
 			</div>
-			<div class="custom-switch">
-				<input type="checkbox" id="ring-vs-full" />
-				<label for="ring-vs-full">Ring Light Mode</label>
+			<div class="switchWrapper">
+				<div>Full Screen Fill</div>
+				<div class="custom-switch">
+					<input type="checkbox" id="mainModeSwitch" checked />
+					<label class="blank" for="mainModeSwitch"></label>
+				</div>
+				<div>Ring Light</div>
+			</div>
+			<!-- Sub settings for ring-light mode -->
+			<div class="ringLightSettings row mt">
+				<select class="form-control" id="ringLightModeSelect">
+					<option value="led" selected>LED Bulbs</option>
+					<option value="solid">Solid Wheel</option>
+				</select>
+			</div>
+			<!-- Toggle to pin settings panel & prevent auto-hide -->
+			<div class="autoHideToggle">
+				<button
+					title="Pin settings panel, to prevent auto-hide"
+					class="btn hideWhenPinned"
+				>
+					<img src="./assets/open_lock_icon.svg" />
+				</button>
+				<button
+					class="btn hideWhenUnPinned"
+					title="Unpin settings panel"
+				>
+					<img src="./assets/closed_lock_icon.svg" />
+				</button>
+			</div>
+			<!-- Manual hide button -->
+			<div class="hideButtonWrapper hideWhenPinned">
+				<button class="hideButton" title="Hide settings panel">
+					🙈
+				</button>
 			</div>
 		</div>
 		<script src="./index.js"></script>

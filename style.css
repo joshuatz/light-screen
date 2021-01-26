@@ -2,8 +2,24 @@
 	--selectedFillColor: #ffffff;
 }
 
+.mt {
+	margin-top: 8px;
+}
+
+.switchWrapper > div {
+	display: inline-block;
+	margin-top: 10px;
+	margin-right: 4px;
+}
+
 .settings.card {
 	background-color: #ffffffcd;
+	transition-duration: 1s;
+	transition-property: left, top;
+	left: 0%;
+}
+.settings.card[data-hidden="true"] {
+	left: -100%;
 }
 .settings .title {
 	font-size: 3rem;
@@ -37,4 +53,25 @@ body {
 .card {
 	padding: 2rem;
 	margin: 2rem;
+}
+
+.autoHideToggle {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+}
+.autoHideToggle button, .hideButton {
+	width: 50px;
+	height: 50px;
+}
+.hideButtonWrapper {
+	position: absolute;
+	top: 64px;
+	right: 10px;
+}
+.settings[data-pinned="true"] .hideWhenPinned, .settings[data-pinned="false"] .hideWhenUnPinned {
+	display: none;
+}
+.settings[data-mode="solid"] .ringLightSettings {
+	display: none;
 }
