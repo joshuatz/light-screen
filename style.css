@@ -1,9 +1,12 @@
 :root {
 	--selectedFillColor: #ffd48a;
+	--cardBackground: #ffffffcd;
 }
 
-body {
-	background-color: var(--selectedFillColor);
+body, html {
+	width: 100%;
+	height: 100%;
+	overflow: hidden !important;
 }
 
 .switchWrapper > div {
@@ -13,13 +16,30 @@ body {
 }
 
 .settings.card {
-	background-color: #ffffffcd;
+	background-color: var(--cardBackground);
 	transition-duration: 1s;
 	transition-property: left, top;
 	left: 0%;
 }
 .settings.card[data-hidden="true"] {
-	left: calc(-100% + 26px);
+	left: calc(-100% + 0px);
+}
+/** This is a tab that sticks out when the card is hidden */
+.settings.card:after {
+	content: '';
+	width: 30px;
+	height: 30px;
+	top: 0px;
+	right: -31px;
+	position: absolute;
+	background-color: var(--cardBackground);
+	opacity: 0;
+	transition-property: opacity;
+	transition-delay: 1s;
+	transition-duration: 1s;
+}
+.settings.card[data-hidden="true"]:after {
+	opacity: 1;
 }
 .settings .title {
 	font-size: 3rem;
@@ -53,14 +73,24 @@ canvas {
 	top: 10px;
 	right: 10px;
 }
-.autoHideToggle button, .hideButton {
+.autoHideToggle button, .hideButton, .aboutButton {
 	width: 50px;
 	height: 50px;
+	padding: 0px;
+	font-size: 2rem;
 }
 .hideButtonWrapper {
 	position: absolute;
 	top: 64px;
 	right: 10px;
+}
+.aboutButtonWrapper {
+	position: absolute;
+	right: 10px;
+	bottom: 10px;
+}
+.aboutButton {
+	padding-top: 6px;
 }
 .settings[data-pinned="true"] .hideWhenPinned, .settings[data-pinned="false"] .hideWhenUnPinned {
 	display: none;
@@ -105,4 +135,12 @@ canvas {
 .card {
 	padding: 2rem;
 	margin: 2rem;
+}
+
+/**
+* Modal
+*/
+.modal .close {
+	font-size: 3rem;
+	border: 3px solid white;
 }

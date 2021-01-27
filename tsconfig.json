@@ -3,6 +3,7 @@
 		"checkJs": true,
 		"allowJs": true,
 		"noEmit": true,
-		"noImplicitAny": true
+		"noImplicitAny": true,
+		"target": "ES6"
 	}
 }

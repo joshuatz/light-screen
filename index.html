@@ -3,7 +3,24 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Virtual Light Screen</title>
+		<title>Light Screen</title>
+		<meta
+			name="description"
+			content="Simple webpage that fills your screen with an emulated LED ring-light, solid ring light, or solid fill. Use preset colors, or pick your own!"
+		/>
+		<meta
+			name="og:description"
+			content="Simple webpage that fills your screen with an emulated LED ring-light, solid ring light, or solid fill. Use preset colors, or pick your own!"
+		/>
+		<meta
+			name="twitter:description"
+			content="Simple webpage that fills your screen with an emulated LED ring-light, solid ring light, or solid fill. Use preset colors, or pick your own!"
+		/>
+		<meta name="og:image" content="./promo.jpg" />
+		<meta name="twitter:image" content="./promo.jpg" />
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:site" content="@1joshuatz" />
+		<meta name="twitter:title" content="Light Screen" />
 		<link
 			rel="stylesheet"
 			href="https://cdn.jsdelivr.net/npm/halfmoon@1.1.1/css/halfmoon.min.css"
@@ -13,6 +30,41 @@
 		<link rel="stylesheet" href="./style.css" />
 	</head>
 	<body>
+		<!-- About Modal -->
+		<div class="modal" id="aboutModal" tabindex="-1" role="dialog">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<a href="#" class="close" role="button" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</a>
+					<h5 class="modal-title">About This Tool:</h5>
+					<p>
+						Hello! This is a webpage that fills your screen with an
+						emulated LED ring-light, solid ring light, or solid
+						fill. Use preset colors, or pick your own!
+					</p>
+					<p>
+						You can find the source code at
+						<a
+							href="https://github.com/joshuatz/light-screen"
+							rel="noopener"
+							target="_blank"
+							>github.com/joshuatz/light-screen</a
+						>
+					</p>
+					<p>
+						Created by
+						<a
+							href="https://joshuatz.com/?utm_source=light-screen"
+							rel="noopener"
+							target="_blank"
+							>Joshua Tzucker</a
+						>
+					</p>
+				</div>
+			</div>
+		</div>
+
 		<canvas id="main"></canvas>
 		<canvas id="overlay"></canvas>
 		<div class="settingsInvite"></div>
@@ -40,12 +92,23 @@
 			</div>
 			<!-- Manual hide button -->
 			<div class="hideButtonWrapper hideWhenPinned">
-				<button class="hideButton" title="Hide settings panel">
-					🙈
+				<button class="btn hideButton" title="Hide settings panel">
+					<span aria-hidden="true">🙈</span>
 				</button>
 			</div>
 			<!-- Webcam video preview -->
 			<video controls id="webcamPreview"></video>
+			<!-- About button -->
+			<div class="aboutButtonWrapper">
+				<a
+					class="btn aboutButton"
+					role="button"
+					title="View about info"
+					href="#aboutModal"
+				>
+					<span aria-hidden="true">❔</span>
+				</a>
+			</div>
 
 			<!-- Main Content -->
 			<h2 class="text-center title">Settings:</h2>
@@ -130,6 +193,7 @@
 				</button>
 			</div>
 		</div>
+		<script src="./constants.js"></script>
 		<script src="./index.js"></script>
 		<script
 			src="https://cdn.jsdelivr.net/npm/nosleep.js@0.12.0/dist/NoSleep.min.js"
