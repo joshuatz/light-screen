@@ -20,54 +20,8 @@
 			data-hidden="false"
 			data-mode="ring"
 			class="settings card"
+			data-preview-on="false"
 		>
-			<h2 class="text-center title">Settings:</h2>
-			<div class="row">
-				<label>
-					<input type="color" id="colorPicker" value="#ffffff" />
-					Primary Color Picker
-				</label>
-			</div>
-			<div class="row">
-				<h4 class="col-12 col-sm-2">Presets:</h4>
-				<div class="col-12 col-sm-10 row presets">
-					<button
-						type="button"
-						class="option btn shadow"
-						style="background-color: white"
-					></button>
-					<button
-						type="button"
-						class="option btn shadow"
-						style="background-color: #f8b868"
-					></button>
-					<button
-						type="button"
-						class="option btn shadow"
-						style="background-color: #fff1b7"
-					></button>
-					<button
-						type="button"
-						class="option btn shadow"
-						style="background-color: #eaf6f5"
-					></button>
-				</div>
-			</div>
-			<div class="switchWrapper">
-				<div>Full Screen Fill</div>
-				<div class="custom-switch">
-					<input type="checkbox" id="mainModeSwitch" checked />
-					<label class="blank" for="mainModeSwitch"></label>
-				</div>
-				<div>Ring Light</div>
-			</div>
-			<!-- Sub settings for ring-light mode -->
-			<div class="ringLightSettings row mt">
-				<select class="form-control" id="ringLightModeSelect">
-					<option value="led" selected>LED Bulbs</option>
-					<option value="solid">Solid Wheel</option>
-				</select>
-			</div>
 			<!-- Toggle to pin settings panel & prevent auto-hide -->
 			<div class="autoHideToggle">
 				<button
@@ -89,7 +43,87 @@
 					🙈
 				</button>
 			</div>
+			<!-- Webcam video preview -->
+			<video controls id="webcamPreview"></video>
+
+			<!-- Main Content -->
+			<h2 class="text-center title">Settings:</h2>
+			<div class="row">
+				<label>
+					<input type="color" id="colorPicker" value="#ffd48a" />
+					Custom Color Picker
+				</label>
+			</div>
+
+			<!-- Swatch / Presets -->
+			<div class="row">
+				<h4 class="col-12 col-sm-2">Presets:</h4>
+				<div class="col-12 col-sm-10 row presets">
+					<button
+						id="customColorButton"
+						type="button"
+						class="option btn shadow"
+						data-value="#ffd48a"
+						style="background-color: #ffd48a"
+					></button>
+					<button
+						type="button"
+						class="option btn shadow"
+						style="background-color: #f8b868"
+					></button>
+					<button
+						type="button"
+						class="option btn shadow"
+						style="background-color: white"
+					></button>
+					<button
+						type="button"
+						class="option btn shadow"
+						style="background-color: #fff1b7"
+					></button>
+					<button
+						type="button"
+						class="option btn shadow"
+						style="background-color: #eaf6f5"
+					></button>
+				</div>
+			</div>
+
+			<!-- Ring Light vs Full Screen Switch -->
+			<div class="switchWrapper">
+				<div>Full Screen Fill</div>
+				<div class="custom-switch">
+					<input type="checkbox" id="mainModeSwitch" checked />
+					<label class="blank" for="mainModeSwitch"></label>
+				</div>
+				<div>Ring Light</div>
+			</div>
+
+			<!-- Sub settings for ring-light mode -->
+			<div class="ringLightSettings row mt">
+				<select class="form-control" id="ringLightModeSelect">
+					<option value="led" selected>LED Bulbs</option>
+					<option value="solid">Solid Wheel</option>
+				</select>
+			</div>
+
+			<div class="row mt">
+				<!-- Webcam preview button -->
+				Camera preview:
+				<button
+					style="margin-left: 10px"
+					class="btn webcamPreviewButton"
+					title="Open a webcam preview"
+				>
+					📹
+				</button>
+			</div>
 		</div>
 		<script src="./index.js"></script>
+		<script
+			src="https://cdn.jsdelivr.net/npm/nosleep.js@0.12.0/dist/NoSleep.min.js"
+			integrity="sha256-iHt2PlPsrrp73dyssp9/+vnaijV2wsyn6koezRT/cxw="
+			crossorigin="anonymous"
+		></script>
 	</body>
 </html>

@@ -11,17 +11,31 @@ const settingsPanel = document.querySelector('.settings.card');
 const mainModeCheckboxSwitch = document.querySelector('#mainModeSwitch');
 /** @type {HTMLSelectElement} */
 const ringLightModeSelect = document.querySelector('#ringLightModeSelect');
+/** @type {HTMLButtonElement} */
+const webcamPreviewButton = document.querySelector(
+	'button.webcamPreviewButton'
+);
+/** @type {HTMLVideoElement} */
+const webcamVideoElem = document.querySelector('video#webcamPreview');
+/** @type {HTMLButtonElement} */
+const customColorButton = document.querySelector('button#customColorButton');
+
 /**
  * Track last time mouse moved / app was interacted with
  */
 let lastInteraction = Date.now();
 let interactionCheckerTimer;
 let settingsAreHidden = false;
+let webcamPreviewIsOpen = false;
+let noSleepInitialized = false;
+let noSleepTracker;
+/** @type {null | MediaStream} */
+let webcamStream;
 
 /** @type {Config} */
 const config = {
 	lockSettingsOnScreen: true,
-	selectedFillColorHex: '#FFF',
+	selectedFillColorStr: '#FFF',
 	mode: 'ring',
 	ringSettings: {
 		numRings: 1,
@@ -47,10 +61,10 @@ const CSS_VARS = {
 
 const AUTOHIDE_MS = 3000;
 
-const handleColorChange = (hexStr = '#FFF') => {
-	console.log(hexStr);
-	root.style.setProperty(CSS_VARS.selectedFillColor, hexStr);
-	config.selectedFillColorHex = hexStr;
+const handleColorChange = (colorStr = '#FFF') => {
+	console.log(colorStr);
+	root.style.setProperty(CSS_VARS.selectedFillColor, colorStr);
+	config.selectedFillColorStr = colorStr;
 	renderFrame();
 };
 
@@ -85,8 +99,8 @@ const drawRing = ({
 		(smallestDim - ringWidthPx * 2 - outsideMarginPx * 2) / 2;
 	const midTrackRadius = innerTrackRidgeRadius + ringWidthPx / 2;
 
-	ctx.fillStyle = config.selectedFillColorHex;
-	ctx.strokeStyle = config.selectedFillColorHex;
+	ctx.fillStyle = config.selectedFillColorStr;
+	ctx.strokeStyle = config.selectedFillColorStr;
 
 	if (style === 'solid') {
 		// For solid, we can just draw a single arc, with lineWidth = ringWidth
@@ -122,6 +136,7 @@ const drawRing = ({
 		let radPointer = 0;
 		// Draw LEDS around the circle
 		for (let x = 0; x < numLeds; x++) {
+			// https://stackoverflow.com/a/839931/11447682
 			const point = {
 				x: Math.floor(
 					innerTrackRidgeRadius * Math.cos(radPointer) + midPoint.x
@@ -165,7 +180,7 @@ const renderFrame = () => {
 		// Easy! Just fill entire canvas
 		// No need to clear, since we are drawing over existing content
 		// Note: You cannot use CSS variables with canvas fillStyle
-		fillCanvas(config.selectedFillColorHex);
+		fillCanvas(config.selectedFillColorStr);
 	} else if (config.mode === 'ring') {
 		canvas.clear();
 		// Dark background
@@ -177,9 +192,47 @@ const renderFrame = () => {
 	}
 };
 
+const startWebcamStream = async () => {
+	if (!webcamPreviewIsOpen) {
+		try {
+			webcamStream = await navigator.mediaDevices.getUserMedia({
+				audio: false,
+				video: { width: 480, height: 270, facingMode: 'user' },
+			});
+			webcamVideoElem.onloadedmetadata = () => {
+				webcamVideoElem.play();
+				webcamPreviewIsOpen = true;
+			};
+			webcamVideoElem.srcObject = webcamStream;
+			settingsPanel.setAttribute('data-preview-on', 'true');
+		} catch (e) {
+			console.error(e);
+			alert(
+				`Something went wrong trying to preview your camera: ${e.toString()}`
+			);
+		}
+	}
+};
+
+const stopWebcamStream = async () => {
+	if (webcamStream) {
+		webcamStream.getTracks().forEach((t) => {
+			if (t.readyState === 'live') {
+				t.stop();
+			}
+		});
+	}
+	webcamStream = null;
+	webcamPreviewIsOpen = false;
+	settingsPanel.setAttribute('data-preview-on', 'false');
+};
+
 const attachListeners = () => {
 	colorPicker.addEventListener('change', () => {
-		handleColorChange(colorPicker.value);
+		const colorStr = colorPicker.value;
+		handleColorChange(colorStr);
+		customColorButton.setAttribute('data-value', colorStr);
+		customColorButton.style.cssText = `background-color: ${colorStr};`;
 	});
 	// Since the canvas is set to take up the whole screen, we need to listen
 	// to resize events, and pass through dimension changes and trigger new
@@ -198,6 +251,11 @@ const attachListeners = () => {
 		if (settingsAreHidden) {
 			settingsAreHidden = false;
 			settingsPanel.setAttribute('data-hidden', 'false');
+		}
+		if (!noSleepInitialized && typeof NoSleep !== undefined) {
+			noSleepInitialized = true;
+			noSleepTracker = new NoSleep();
+			noSleepTracker.enable();
 		}
 	});
 	document.querySelector('.autoHideToggle').addEventListener('click', () => {
@@ -224,6 +282,13 @@ const attachListeners = () => {
 	ringLightModeSelect.addEventListener('change', () => {
 		config.ringSettings.mode = /** @type {Config['ringSettings']['mode']} */ (ringLightModeSelect.value);
 		renderFrame();
+	});
+	webcamPreviewButton.addEventListener('click', () => {
+		if (!webcamPreviewIsOpen) {
+			startWebcamStream();
+		} else {
+			stopWebcamStream();
+		}
 	});
 	document
 		.querySelector('button.hideButton')
