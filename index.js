@@ -2,7 +2,10 @@
 const colorPicker = document.querySelector('#colorPicker');
 /** @type {HTMLHtmlElement} */
 const root = document.querySelector(':root');
+/** @type {HTMLCanvasElement} */
 const CE = document.querySelector('canvas');
+/** @type {HTMLCanvasElement} */
+const CE_OVERLAY = document.querySelector('canvas#overlay');
 /** @type {NodeListOf<HTMLButtonElement>} */
 const presetOptionButtons = document.querySelectorAll('.presets button');
 /** @type {HTMLDivElement} */
@@ -19,6 +22,8 @@ const webcamPreviewButton = document.querySelector(
 const webcamVideoElem = document.querySelector('video#webcamPreview');
 /** @type {HTMLButtonElement} */
 const customColorButton = document.querySelector('button#customColorButton');
+/** @type {HTMLInputElement} */
+const diffusedCheckbox = document.querySelector('input#diffusedCheckbox');
 
 /**
  * Track last time mouse moved / app was interacted with
@@ -34,12 +39,25 @@ let webcamStream;
 
 /** @type {Config} */
 const config = {
-	lockSettingsOnScreen: true,
-	selectedFillColorStr: '#FFF',
+	lockSettingsOnScreen: false,
+	selectedFillColorStr: '#ffd48a',
 	mode: 'ring',
 	ringSettings: {
 		numRings: 1,
 		mode: 'led',
+		diffuse: true,
+	},
+};
+
+const overlayCanvas = {
+	el: CE_OVERLAY,
+	ctx: CE_OVERLAY.getContext('2d'),
+	dimensions: {
+		w: CE_OVERLAY.width,
+		h: CE_OVERLAY.height,
+	},
+	clear() {
+		this.ctx.clearRect(0, 0, canvas.dimensions.w, canvas.dimensions.h);
 	},
 };
 
@@ -52,6 +70,7 @@ const canvas = {
 	},
 	clear() {
 		this.ctx.clearRect(0, 0, canvas.dimensions.w, canvas.dimensions.h);
+		overlayCanvas.clear();
 	},
 };
 
@@ -86,23 +105,23 @@ const drawRing = ({
 	ringWidthPercent,
 	numLeds,
 }) => {
+	console.log(numLeds);
 	if (!ringWidthPercent) {
-		ringWidthPercent = style === 'solid' ? 18 : 10;
+		ringWidthPercent = style === 'solid' ? 18 : 16;
 	}
-	const minLedSpacingPx = 2;
+	const minLedSpacingPx = 3;
 	const midPoint = getMidPoint();
 	const { ctx, dimensions } = canvas;
 	const smallestDim =
 		dimensions.w < dimensions.h ? dimensions.w : dimensions.h;
 	const ringWidthPx = Math.floor(smallestDim * (ringWidthPercent / 100));
-	const innerTrackRidgeRadius =
-		(smallestDim - ringWidthPx * 2 - outsideMarginPx * 2) / 2;
-	const midTrackRadius = innerTrackRidgeRadius + ringWidthPx / 2;
 
 	ctx.fillStyle = config.selectedFillColorStr;
 	ctx.strokeStyle = config.selectedFillColorStr;
 
 	if (style === 'solid') {
+		const midTrackRadius =
+			smallestDim / 2 - ringWidthPx / 2 - outsideMarginPx;
 		// For solid, we can just draw a single arc, with lineWidth = ringWidth
 		ctx.beginPath();
 		ctx.lineWidth = ringWidthPx;
@@ -112,14 +131,40 @@ const drawRing = ({
 		// We will emulate a "track" + embedded LEDs, by drawing LEDS first
 		// and then drawing the track (2 concentric circles) on top, and
 		// finally by a blur layer on top
-		const ledTrackCircumference = 2 * Math.PI * innerTrackRidgeRadius;
+		// Inside track ridge
+		const insideTrackRidgeRadius =
+			smallestDim / 2 -
+			ringWidthPx -
+			outsideMarginPx -
+			minLedSpacingPx * 2;
+		// This line is the very middle of a virtual track that contains all LEDs,
+		// or contains the solid fill
+		const midTrackRidgeRadius =
+			insideTrackRidgeRadius + ringWidthPx * 0.5 + minLedSpacingPx;
+		// Outside track ridge
+		const outsideTrackRidgeRadius =
+			midTrackRidgeRadius + ringWidthPx * 0.5 + minLedSpacingPx;
+		console.log({
+			smallestDim,
+			ringWidthPx,
+			insideTrackRidgeRadius,
+			midTrackRidgeRadius,
+			outsideTrackRidgeRadius,
+		});
+		const ledTrackCircumference = 2 * Math.PI * midTrackRidgeRadius;
 		let ledRadius;
 		if (numLeds) {
 			// If numLeds is provided, we need to make them all fit by reducing
 			// the radius of each LED
+			// const maxRadius = smallestDim / 2 - ringWidthPx * 0.5;
+			const maxLedRadius =
+				(outsideTrackRidgeRadius - insideTrackRidgeRadius) / 2 -
+				minLedSpacingPx;
 			ledRadius = Math.floor(
-				ledTrackCircumference / numLeds / 2 - minLedSpacingPx
+				// prettier-ignore
+				(ledTrackCircumference / numLeds) / 2 - minLedSpacingPx * 2
 			);
+			ledRadius = ledRadius > maxLedRadius ? maxLedRadius : ledRadius;
 		} else {
 			// If numLeds is not provided, the goal is to maximize the *size*
 			// of each LED, while staying within the bound of maxRingWidth
@@ -127,7 +172,7 @@ const drawRing = ({
 			// Compute number of LEDS that can fit within the given track
 			// Each LED occupies the space of (2 * R) + (2 * spacing), where 2R is
 			// the same as the desired ring width px
-			ledRadius = ringWidthPx;
+			ledRadius = ringWidthPx / 2;
 			const ledDiameterWithMargin = ledRadius * 2 + minLedSpacingPx * 2;
 			numLeds = Math.floor(ledTrackCircumference / ledDiameterWithMargin);
 		}
@@ -139,10 +184,10 @@ const drawRing = ({
 			// https://stackoverflow.com/a/839931/11447682
 			const point = {
 				x: Math.floor(
-					innerTrackRidgeRadius * Math.cos(radPointer) + midPoint.x
+					midTrackRidgeRadius * Math.cos(radPointer) + midPoint.x
 				),
 				y: Math.floor(
-					innerTrackRidgeRadius * Math.sin(radPointer) + midPoint.y
+					midTrackRidgeRadius * Math.sin(radPointer) + midPoint.y
 				),
 			};
 			ctx.beginPath();
@@ -150,8 +195,22 @@ const drawRing = ({
 			ctx.fill();
 			radPointer += radsSep;
 		}
-		ctx.lineWidth = 2;
-		ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+
+		if (config.ringSettings.diffuse) {
+			// Create an arc that covers the LEDs, with a semi-transparent fill
+			ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+			ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+			ctx.beginPath();
+			ctx.lineWidth = outsideTrackRidgeRadius - insideTrackRidgeRadius;
+			ctx.arc(
+				midPoint.x,
+				midPoint.y,
+				midTrackRidgeRadius,
+				0,
+				2 * Math.PI
+			);
+			ctx.stroke();
+		}
 	}
 };
 
@@ -169,12 +228,14 @@ const fillCanvas = (fillStyle = '#FFF') => {
 const renderFrame = () => {
 	// Update canvas props, in case of resize
 	const boundingRect = canvas.el.getBoundingClientRect();
-	canvas.dimensions = {
-		w: boundingRect.width,
-		h: boundingRect.height,
-	};
-	canvas.el.width = boundingRect.width;
-	canvas.el.height = boundingRect.height;
+	[canvas, overlayCanvas].forEach((o) => {
+		o.dimensions = {
+			w: boundingRect.width,
+			h: boundingRect.height,
+		};
+		o.el.width = boundingRect.width;
+		o.el.height = boundingRect.height;
+	});
 
 	if (config.mode === 'solid') {
 		// Easy! Just fill entire canvas
@@ -252,7 +313,7 @@ const attachListeners = () => {
 			settingsAreHidden = false;
 			settingsPanel.setAttribute('data-hidden', 'false');
 		}
-		if (!noSleepInitialized && typeof NoSleep !== undefined) {
+		if (!noSleepInitialized && typeof NoSleep !== 'undefined') {
 			noSleepInitialized = true;
 			noSleepTracker = new NoSleep();
 			noSleepTracker.enable();
@@ -277,6 +338,10 @@ const attachListeners = () => {
 	mainModeCheckboxSwitch.addEventListener('change', () => {
 		config.mode = mainModeCheckboxSwitch.checked ? 'ring' : 'solid';
 		settingsPanel.setAttribute('data-mode', config.mode);
+		renderFrame();
+	});
+	diffusedCheckbox.addEventListener('change', () => {
+		config.ringSettings.diffuse = !!diffusedCheckbox.checked;
 		renderFrame();
 	});
 	ringLightModeSelect.addEventListener('change', () => {

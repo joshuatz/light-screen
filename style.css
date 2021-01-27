@@ -2,8 +2,8 @@
 	--selectedFillColor: #ffd48a;
 }
 
-.mt {
-	margin-top: 8px;
+body {
+	background-color: var(--selectedFillColor);
 }
 
 .switchWrapper > div {
@@ -40,19 +40,12 @@ canvas {
 	left: 0px;
 }
 
-body {
-	background-color: var(--selectedFillColor);
-}
 .presets .option {
 	width: 50px;
 	height: 50px;
 }
 .presets {
 	justify-content: space-around;
-}
-.card {
-	padding: 2rem;
-	margin: 2rem;
 }
 
 .autoHideToggle {
@@ -87,11 +80,6 @@ body {
 	background-color: black;
 	border: 1px solid white;
 }
-
-
-
-
-
 .webcamPreviewButton {
 	position: relative;
 	overflow: hidden;
@@ -105,4 +93,16 @@ body {
 	background-color: red;
 	position: absolute;
 	transform: translateX(-43%) rotate(135deg);
+}
+
+
+/**
+* Utilities
+*/
+.mt {
+	margin-top: 8px;
+}
+.card {
+	padding: 2rem;
+	margin: 2rem;
 }

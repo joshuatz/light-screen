@@ -13,7 +13,8 @@
 		<link rel="stylesheet" href="./style.css" />
 	</head>
 	<body>
-		<canvas></canvas>
+		<canvas id="main"></canvas>
+		<canvas id="overlay"></canvas>
 		<div class="settingsInvite"></div>
 		<div
 			data-pinned="false"
@@ -101,10 +102,20 @@
 
 			<!-- Sub settings for ring-light mode -->
 			<div class="ringLightSettings row mt">
-				<select class="form-control" id="ringLightModeSelect">
+				<!-- LED Ring vs Solid Ring -->
+				<select
+					class="form-control col-12 col-sm-6 mt"
+					id="ringLightModeSelect"
+				>
 					<option value="led" selected>LED Bulbs</option>
 					<option value="solid">Solid Wheel</option>
 				</select>
+				<div class="col-12 col-sm-6 d-flex justify-content-center mt">
+					<div class="custom-checkbox">
+						<input type="checkbox" id="diffusedCheckbox" checked />
+						<label for="diffusedCheckbox">Diffused Effect</label>
+					</div>
+				</div>
 			</div>
 
 			<div class="row mt">

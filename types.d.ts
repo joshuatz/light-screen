@@ -7,6 +7,7 @@ interface Config {
 		mode: 'led' | 'solid';
 		numRings?: number;
 		numLeds?: number;
+		diffuse?: boolean;
 	};
 }
 
