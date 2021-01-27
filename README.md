@@ -1,10 +1,14 @@
-## Light Screen
+## Light Screen Display
 > Simple webpage that fills your screen with an emulated LED ring-light, solid ring light, or solid fill. Use preset colors, or pick your own!
 
-## Use It 🚀
+## Use It
+<span style="font-size:2rem;">
 
-@TODO - Add production link
+🚀 -> [displaylight.netlify.app](https://displaylight.netlify.app/)
 
+</span>
+
+## Screenshots
 ![Demo Image](./promo.png)
 
 ## Why?
@@ -25,6 +29,10 @@ I made this for fun, because I sometimes have some spare screen real-estate when
 ## Creator
 More About Me (Joshua Tzucker):
 
- - Website 🔗: <a href="https://joshuatz.com/" rel="noopener" target="_blank">joshuatz.com</a>
- - Twitter 💬: <a href="https://twitter.com/1joshuatz" rel="noopener" target="_blank">@1joshuatz</a>
- - Github 💾: <a href="https://github.com/joshuatz" rel="noopener" target="_blank">github.com/joshuatz</a>
+- Website 🔗: <a href="https://joshuatz.com/" rel="noopener" target="_blank">joshuatz.com</a>
+- Twitter 💬: <a href="https://twitter.com/1joshuatz" rel="noopener" target="_blank">@1joshuatz</a>
+- Github 💾: <a href="https://github.com/joshuatz" rel="noopener" target="_blank">github.com/joshuatz</a>
+
+## Attribution
+- [Favicon](https://www.iconfinder.com/icons/3045432/desktop_hotel_lamp_light_office_icon)
+- [Lock Icons](https://www.iconfinder.com/iconsets/evil-icons-user-interface)
