@@ -4,6 +4,7 @@
 let lastInteraction = Date.now();
 let interactionCheckerTimer;
 let settingsAreHidden = false;
+let settingsHideInProgress = false;
 let webcamPreviewIsOpen = false;
 let noSleepInitialized = false;
 let noSleepTracker;
@@ -256,6 +257,63 @@ const stopWebcamStream = () => {
 	settingsPanel.setAttribute('data-preview-on', 'false');
 };
 
+const hideSettings = () => {
+	settingsHideInProgress = true;
+	settingsAreHidden = true;
+	settingsPanel.setAttribute('data-hidden', 'true');
+	setTimeout(() => {
+		settingsHideInProgress = false;
+	}, 1000);
+};
+
+/**
+ *
+ * @param {Pick<DOMRect, 'top' | 'left' | 'right' | 'bottom'>} box
+ * @param {number} x
+ * @param {number} y
+ */
+const isInHitbox = (box, x, y) => {
+	if (x < box.left || y < box.top) {
+		return false;
+	}
+
+	if (x > box.right || y > box.bottom) {
+		return false;
+	}
+
+	return true;
+};
+
+/**
+ *
+ * @param {MouseEvent} evt
+ */
+const handleInteraction = (evt) => {
+	// If mouse moved over settings panel or invite, treat as direct interaction
+	const settingsHitBox = settingsPanel.getBoundingClientRect();
+	// Using getBoundingClientRect doesn't seem to play nice with the :after
+	// pseudo element, so using manually defined hitbox (with extra padding)
+	let inviteHitBox = { top: 0, left: 0, right: 100, bottom: 100 };
+	const x = evt.clientX;
+	const y = evt.clientY;
+	if (
+		(!settingsHideInProgress && isInHitbox(settingsHitBox, x, y)) ||
+		isInHitbox(inviteHitBox, x, y)
+	) {
+		lastInteraction = Date.now();
+		if (settingsAreHidden) {
+			settingsAreHidden = false;
+			settingsPanel.setAttribute('data-hidden', 'false');
+		}
+	}
+
+	if (!noSleepInitialized && typeof NoSleep !== 'undefined') {
+		noSleepInitialized = true;
+		noSleepTracker = new NoSleep();
+		noSleepTracker.enable();
+	}
+};
+
 const attachListeners = () => {
 	colorPicker.addEventListener('change', () => {
 		const colorStr = colorPicker.value;
@@ -275,18 +333,8 @@ const attachListeners = () => {
 			handleColorChange(presetColorStr);
 		});
 	});
-	document.addEventListener('mousemove', () => {
-		lastInteraction = Date.now();
-		if (settingsAreHidden) {
-			settingsAreHidden = false;
-			settingsPanel.setAttribute('data-hidden', 'false');
-		}
-		if (!noSleepInitialized && typeof NoSleep !== 'undefined') {
-			noSleepInitialized = true;
-			noSleepTracker = new NoSleep();
-			noSleepTracker.enable();
-		}
-	});
+	document.addEventListener('mousemove', handleInteraction);
+	document.addEventListener('click', handleInteraction);
 	document.querySelector('.autoHideToggle').addEventListener('click', () => {
 		config.lockSettingsOnScreen = !config.lockSettingsOnScreen;
 		settingsPanel.setAttribute(
@@ -298,8 +346,7 @@ const attachListeners = () => {
 		if (!config.lockSettingsOnScreen) {
 			const now = Date.now();
 			if (now - lastInteraction >= AUTOHIDE_MS) {
-				settingsAreHidden = true;
-				settingsPanel.setAttribute('data-hidden', 'true');
+				hideSettings();
 			}
 		}
 	}, AUTOHIDE_MS);
@@ -325,10 +372,7 @@ const attachListeners = () => {
 	});
 	document
 		.querySelector('button.hideButton')
-		.addEventListener('click', () => {
-			settingsAreHidden = true;
-			settingsPanel.setAttribute('data-hidden', 'true');
-		});
+		.addEventListener('click', hideSettings);
 };
 
 /**

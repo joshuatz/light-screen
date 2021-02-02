@@ -27,10 +27,10 @@ body, html {
 /** This is a tab that sticks out when the card is hidden */
 .settings.card:after {
 	content: '';
-	width: 30px;
-	height: 30px;
+	width: 40px;
+	height: 60px;
 	top: 0px;
-	right: -31px;
+	right: -41px;
 	position: absolute;
 	background-color: var(--cardBackground);
 	opacity: 0;
