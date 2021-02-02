@@ -9,7 +9,7 @@
 </span>
 
 ## Screenshots
-![Demo Image](./promo.png)
+![Demo Image](./assets/promo.png)
 
 ## Why?
 I made this for fun, because I sometimes have some spare screen real-estate when attending video conferencing events, and was wondering if something like this could actually make a difference. It actually does help a little! However, it definitely is no replacement for a real dedicated fill light / ring light / lamp.

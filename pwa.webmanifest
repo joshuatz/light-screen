@@ -1,0 +1,16 @@
+{
+	"$schema": "https://json.schemastore.org/web-manifest-combined",
+	"name": "Light Screen Display",
+	"short_name": "Light Screen Display",
+	"start_url": "/",
+	"display": "standalone",
+	"theme_color": "#f8b868",
+	"background_color": "#000000",
+	"icons": [
+		{
+			"src": "/assets/icon-512.png",
+			"sizes": "512x512",
+			"type": "image/png"
+		}
+	]
+}
