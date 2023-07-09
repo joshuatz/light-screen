@@ -360,7 +360,10 @@ const attachListeners = () => {
 		renderFrame();
 	});
 	ringLightModeSelect.addEventListener('change', () => {
-		config.ringSettings.mode = /** @type {Config['ringSettings']['mode']} */ (ringLightModeSelect.value);
+		config.ringSettings.mode =
+			/** @type {Config['ringSettings']['mode']} */ (
+				ringLightModeSelect.value
+			);
 		renderFrame();
 	});
 	webcamPreviewButton.addEventListener('click', () => {

@@ -1,0 +1,33 @@
+{
+	"name": "light-screen-display",
+	"version": "1.0.0",
+	"description": "Virtual (web-based) Ring Light / Fill Light application, with custom settings.",
+	"private": true,
+	"main": "./index.js",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/joshuatz/light-screen.git"
+	},
+	"bugs": {
+		"url": "https://github.com/joshuatz/light-screen/issues"
+	},
+	"author": {
+		"name": "Joshua Tzucker",
+		"url": "https://joshuatz.com/?utm_source=package"
+	},
+	"homepage": "https://github.com/joshuatz/light-screen",
+	"keywords": [
+		"zoom",
+		"obs-studio",
+		"video-chat"
+	],
+	"license": "MIT",
+	"scripts": {
+		"type-check": "tsc",
+		"lint": "prettier --check ."
+	},
+	"devDependencies": {
+		"prettier": "^2.8.8",
+		"typescript": "^5.1.6"
+	}
+}
