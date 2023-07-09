@@ -49,7 +49,6 @@ const canvas = {
 };
 
 const handleColorChange = (colorStr = '#FFF') => {
-	console.log(colorStr);
 	root.style.setProperty(CSS_VARS.selectedFillColor, colorStr);
 	config.selectedFillColorStr = colorStr;
 	renderFrame();
@@ -73,7 +72,6 @@ const drawRing = ({
 	ringWidthPercent,
 	numLeds,
 }) => {
-	console.log(numLeds);
 	if (!ringWidthPercent) {
 		ringWidthPercent = style === 'solid' ? 18 : 16;
 	}
@@ -112,13 +110,6 @@ const drawRing = ({
 		// Outside track ridge
 		const outsideTrackRidgeRadius =
 			midTrackRidgeRadius + ringWidthPx * 0.5 + minLedSpacingPx;
-		console.log({
-			smallestDim,
-			ringWidthPx,
-			insideTrackRidgeRadius,
-			midTrackRidgeRadius,
-			outsideTrackRidgeRadius,
-		});
 		const ledTrackCircumference = 2 * Math.PI * midTrackRidgeRadius;
 		let ledRadius;
 		if (numLeds) {
