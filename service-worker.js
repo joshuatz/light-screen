@@ -6,8 +6,9 @@
 /**
  * Config Constants
  */
-const VERSION = `v1`;
-const CACHE_NAME = `light-screen-display-${VERSION}`;
+/** Bump this version to invalidate the PWA / service-worker cache */
+const VERSION = `v3`;
+const CURRENT_CACHE_NAME = `light-screen-display-${VERSION}`;
 const CACHE_PREFETCH_URLS = ['/', 'index.html'];
 const CACHE_RULES = {
 	firstParty: [/^\/$/, /\.css/, /\.js/, /\.html/, /\.svg/],
@@ -42,29 +43,29 @@ const getShouldCache = (req) => {
 		evt.waitUntil(
 			// Caching
 			(async () => {
-				const cache = await caches.open(CACHE_NAME);
+				const cache = await caches.open(CURRENT_CACHE_NAME);
 				// prefetch specific URLs and cache
 				await cache.addAll(CACHE_PREFETCH_URLS);
 			})()
 		);
 	});
 
+	const clearCache = async () => {
+		// Cleanup - delete old cache versions
+		const allCacheNames = await caches.keys();
+		await Promise.all(
+			allCacheNames.map((cacheName) => {
+				if (cacheName !== CURRENT_CACHE_NAME) {
+					console.log(`Deleting old cache`, cacheName);
+					return caches.delete(cacheName);
+				}
+			})
+		);
+	};
+
 	// LIFECYCLE - Activate
 	self.addEventListener('activate', (evt) => {
-		evt.waitUntil(
-			(async () => {
-				// Cleanup - delete old cache versions
-				const allCacheNames = await caches.keys();
-				await Promise.all(
-					allCacheNames.map((n) => {
-						if (n !== CACHE_NAME) {
-							console.log(`Deleting old cache`, n);
-							return caches.delete(n);
-						}
-					})
-				);
-			})()
-		);
+		evt.waitUntil(clearCache());
 	});
 
 	// FETCH
@@ -83,7 +84,7 @@ const getShouldCache = (req) => {
 
 				// Cache if matches rule and status 200
 				if (fetchResponse.status === 200 && getShouldCache(req)) {
-					const cache = await caches.open(CACHE_NAME);
+					const cache = await caches.open(CURRENT_CACHE_NAME);
 					await cache.put(req.url, fetchResponse.clone());
 				}
 
