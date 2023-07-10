@@ -1,4 +1,5 @@
 interface Config {
+	version: number;
 	/** If the settings panel should always be on screen / non-hideable */
 	lockSettingsOnScreen: boolean;
 	selectedFillColorStr: string;
@@ -9,6 +10,7 @@ interface Config {
 		numLeds?: number;
 		diffuse?: boolean;
 	};
+	customColor: string;
 }
 
 type FillStyle = string | CanvasGradient | CanvasPattern;
@@ -25,4 +27,9 @@ interface RingParam {
 declare class NoSleep {
 	public enable(): void;
 	public disable(): void;
+}
+
+// @todo actually bundle this library
+declare class ObservableSlim {
+	public static create<T>(obj: T, batch: boolean, callback: () => void): T;
 }

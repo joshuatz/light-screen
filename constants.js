@@ -30,3 +30,5 @@ const CSS_VARS = {
 };
 
 const AUTOHIDE_MS = 3000;
+
+const LOCAL_STORAGE_CONFIG_KEY = 'light_screen_display_config';

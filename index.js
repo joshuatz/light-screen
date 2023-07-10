@@ -12,7 +12,8 @@ let noSleepTracker;
 let webcamStream;
 
 /** @type {Config} */
-const config = {
+const DEFAULT_CONFIG = {
+	version: 1,
 	lockSettingsOnScreen: false,
 	selectedFillColorStr: '#ffd48a',
 	mode: 'ring',
@@ -21,7 +22,9 @@ const config = {
 		mode: 'led',
 		diffuse: true,
 	},
+	customColor: '#ffd48a',
 };
+let config = DEFAULT_CONFIG;
 
 const overlayCanvas = {
 	el: CE_OVERLAY,
@@ -309,6 +312,7 @@ const attachListeners = () => {
 	colorPicker.addEventListener('change', () => {
 		const colorStr = colorPicker.value;
 		handleColorChange(colorStr);
+		config.customColor = colorStr;
 		customColorButton.setAttribute('data-value', colorStr);
 		customColorButton.style.cssText = `background-color: ${colorStr};`;
 	});
@@ -369,10 +373,47 @@ const attachListeners = () => {
 		.addEventListener('click', hideSettings);
 };
 
+attachListeners();
+
 /**
  * Main Init
  */
-attachListeners();
+// Try to restore config from local storage
+const storedConfigStr = localStorage.getItem(LOCAL_STORAGE_CONFIG_KEY);
+if (storedConfigStr) {
+	try {
+		/** @type {Config} */
+		const storedConfig = JSON.parse(storedConfigStr);
+		if (storedConfig.version === DEFAULT_CONFIG.version) {
+			config = storedConfig;
+			// Update DOM to match config
+			ringLightModeSelect.value = config.ringSettings.mode;
+			mainModeCheckboxSwitch.checked = config.mode === 'ring';
+			diffusedCheckbox.checked = config.ringSettings.diffuse;
+			customColorButton.setAttribute('data-value', config.customColor);
+			colorPicker.value = config.customColor;
+			[
+				ringLightModeSelect,
+				mainModeCheckboxSwitch,
+				diffusedCheckbox,
+				colorPicker,
+			].forEach((e) => e.dispatchEvent(new Event('change')));
+		}
+	} catch (err) {
+		console.warn('Could not restore saved settings', err);
+	}
+}
+
+// Set up observable wrapper around config,to auto-sync with local storage
+config = ObservableSlim.create(config, true, () => {
+	try {
+		localStorage.setItem(
+			LOCAL_STORAGE_CONFIG_KEY,
+			JSON.stringify(config, null, 0)
+		);
+	} catch {}
+});
+
 renderFrame();
 settingsPanel.setAttribute(
 	'data-pinned',
